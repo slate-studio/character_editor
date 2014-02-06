@@ -14,6 +14,9 @@
 
     @_bindSelect()
     @_bindWindowResize()
+    @_bindButtons()
+    @_bindAnchorForm()
+
 
     # return this so that we can chain and use the bridge with less code.
     @
@@ -83,7 +86,7 @@
     return templates[key]
 
   _build: ->
-    html = """<ul id='character-editor-toolbar-actions' class='character_editor_toolbar_actions'>"""
+    html = """<ul id='character_editor_toolbar_actions' class='character-editor-toolbar-actions'>"""
 
     $.each @options.buttons, (i, key) =>
       html += @_buttonTemplate(key)
@@ -95,15 +98,16 @@
      </div>"""
     @$elem.html(html)
 
-    # this.keepToolbarAlive = false;
-    @$anchorForm     = $('#character_editor_toolbar_form_anchor')
+    @$anchorForm     = @$elem.find('#character_editor_toolbar_form_anchor')
     @$anchorInput    = @$anchorForm.children('input')
-    @$toolbarActions = $('#character_editor_toolbar_actions')
+    @$toolbarActions = @$elem.find('#character_editor_toolbar_actions')
 
-  hideActions: ->
+    @$anchorForm.hide()
+
+  _hideActions: ->
     @$elem.removeClass('character-editor-toolbar-active')
 
-  showActions: ->
+  _showActions: ->
     timer    = ''
 
     @$anchorForm.hide()
@@ -116,7 +120,7 @@
         @$elem.addClass('character-editor-toolbar-active')
     ), 100
 
-  setPosition: ->
+  _setPosition: ->
     $contentView      = $(@options.viewSelector)
 
     contentLeftOffset = $contentView.offset().left
@@ -156,6 +160,13 @@
       @$elem.css 'left', defaultLeft + middleBoundary + 'px'
 
     # TODO: update arrow layout to make it possible to move it on edge cases
+    #
+    #
+    #
+    #
+    #
+    #
+    #
 
   _bindSelect: ->
     if !@options.disableToolbar
@@ -164,15 +175,20 @@
 
       $(@options.viewSelector).on 'mouseup keyup blur', (e) =>
         clearTimeout(timer)
-        timer = setTimeout ( -> toolbar.checkSelection() ), @options.delay
+        timer = setTimeout ( -> toolbar._checkSelection() ), @options.delay
 
   _bindWindowResize: ->
     timer = ''
     $(window).on 'resize', =>
       clearTimeout(timer)
-      timer = setTimeout ( => if @$elem.hasClass('character-editor-toolbar-active') then @setPosition() ), 100
+      timer = setTimeout ( => if @$elem.hasClass('character-editor-toolbar-active') then @_setPosition() ), 100
 
-  checkSelection: ->
+  _getActiveEditor: ->
+    selection = window.getSelection()
+    $editorElement = $(selection.getRangeAt(0).commonAncestorContainer).parents('[data-editor-element]')
+    if $editorElement then $editorElement.data('editor') else false
+
+  _checkSelection: ->
     newSelection  = window.getSelection()
     selectionHtml = getSelectionHtml()
     selectionHtml = selectionHtml.replace(/<[\S]+><\/[\S]+>/gim, '')
@@ -182,19 +198,148 @@
     hasMultiParagraphs = if hasMultiParagraphs then hasMultiParagraphs.length else 0
 
     if newSelection.toString().trim() == '' or ( !@options.allowMultiParagraphSelection and hasMultiParagraphs)
-      @hideActions()
+      @_hideActions()
     else
-      $editorElement = $(newSelection.getRangeAt(0).commonAncestorContainer).parents('[data-editor-element]')
+      @selection   = newSelection
+      activeEditor = @_getActiveEditor()
 
-      @activeEditor = $editorElement.data('editor')
-
-      if !@activeEditor or @activeEditor.options.disableToolbar
-        @hideActions()
+      if !activeEditor or activeEditor.options.disableToolbar
+        @_hideActions()
       else
-        @setPosition()
-        @showActions()
+        @_setButtonStates()
+        @_setPosition()
+        @_showActions()
+
+  _setButtonStates: ->
+    $buttons = @$elem.find('button')
+    $buttons.removeClass('character-editor-button-active')
+
+    parentNode = @selection.anchorNode
+
+    if !parentNode.tagName
+      parentNode = @selection.anchorNode.parentNode
+
+    while parentNode.tagName != undefined and @options.parentElements.indexOf(parentNode.tagName) == -1
+      tag = parentNode.tagName.toLowerCase()
+      @_activateButton(tag)
+      parentNode = parentNode.parentNode
+
+  _activateButton: (tag) ->
+    $el = @$elem.find('[data-element="' + tag + '"]').first()
+    if $el.length and !$el.hasClass('character-editor-button-active')
+      $el.addClass('character-editor-button-active')
+
+  _getSelectionData: (el) ->
+    if el and el.tagName
+      tagName = el.tagName.toLowerCase()
+
+    while el and @options.parentElements.indexOf(tagName) == -1
+      el = el.parentNode
+      if el and el.tagName
+        tagName = el.tagName.toLowerCase()
+
+    return { el: el, tagName: tagName }
+
+  _execFormatBlock: (el) ->
+    selectionData = @_getSelectionData(@selection.anchorNode)
+
+    # FF handles blockquote differently on formatBlock allowing nesting, we need to use outdent
+    # https://developer.mozilla.org/en-US/docs/Rich-Text_Editing_in_Mozilla
+    if el == 'blockquote' and selectionData.el and selectionData.el.parentNode.tagName.toLowerCase() == 'blockquote'
+      return document.execCommand('outdent', false, null)
+
+    if selectionData.tagName == el
+      el = 'p'
+
+    return document.execCommand('formatBlock', false, el)
+
+  _execAction: (action, e) ->
+    if action.indexOf('append-') > -1
+     @_execFormatBlock(action.replace('append-', ''))
+     @_setPosition()
+     @_setButtonStates()
+
+    else if action is 'anchor'
+     @_triggerAnchorAction(e)
+
+    else if action is 'image'
+      document.execCommand('insertImage', false, window.getSelection())
+
+    else
+      document.execCommand(action, false, null)
+      @_setPosition()
+
+  _triggerAnchorAction: (e) ->
+    if @selection.anchorNode.parentNode.tagName.toLowerCase() == 'a'
+      document.execCommand('unlink', false, null)
+    else
+      if @$anchorForm.is(':visible') then @_showActions() else @_showAnchorForm()
+
+  _showAnchorForm: ->
+    @savedSelection = window.saveSelection()
+    @$toolbarActions.hide()
+    @$anchorForm.show()
+    @$anchorInput.focus()
+    @$anchorInput.val('')
+
+  _bindButtons: ->
+    toolbar  = @
+    $buttons = @$elem.find('button')
+
+    triggerAction = (e) ->
+      e.preventDefault()
+      e.stopPropagation()
+
+      if not toolbar.selection
+        toolbar._checkSelection()
+
+      $button = $(e.currentTarget)
+      $button.toggleClass('character-editor-button-active')
+
+      action = $button.attr('data-action')
+      toolbar._execAction(action, e)
+
+    $buttons.on 'click', triggerAction
+
+  setTargetBlank: ->
+    el = window.getSelectionStart()
+
+    if el.tagName.toLowerCase() == 'a'
+      el.target = '_blank'
+    else
+      $(el).find('a').each (i, el) -> $(el).attr('target', '_blank')
+
+  createLink: (input) ->
+    window.restoreSelection(@savedSelection)
+    document.execCommand('createLink', false, @$anchorInput.val())
+    if @options.targetBlank
+      @setTargetBlank()
+
+    @showActions()
+    @$anchorInput.val('')
+
+  _bindAnchorForm: ->
+    @$anchorForm.on 'click', (e) ->
+      e.stopPropagation()
+
+    @$anchorInput.on 'keyup', (e) =>
+      if e.keyCode == 13
+        e.preventDefault()
+        @createLink()
+
+    @$anchorInput.on 'blur', (e) =>
+      @_checkSelection()
+
+    @$anchorForm.find('a').on 'click', (e) =>
+      e.preventDefault()
+      @_showActions()
+      window.restoreSelection(@savedSelection)
 
   destroy: ->
     $(@options.viewSelector).off 'mouseup keyup blur'
     $(window).off 'resize'
+    @$anchorForm.off 'click'
+    @$anchorForm.find('a').off 'click'
+    @$anchorInput.on 'keyup blur'
+    @$elem.find('button').off 'click'
     @$elem.remove()

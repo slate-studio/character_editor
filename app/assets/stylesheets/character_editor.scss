@@ -74,8 +74,7 @@ $link_color: #fff;
                                         //@include transition(top .075s ease-out,left .075s ease-out);
 }
 
-.character-editor-toolbar-form-anchor { display: none;
-                                        background: $bgcolor;
+.character-editor-toolbar-form-anchor { background: $bgcolor;
                                         color: #fff;
   input[type='text'], a               { font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
   }

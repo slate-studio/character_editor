@@ -29,3 +29,23 @@ window.getSelectionStart = ->
   return startNode
 
 window.isListItemChild = (node) -> $(node).parents('li').length > 0
+
+# http://stackoverflow.com/questions/5605401/insert-link-in-contenteditable-element
+# by Tim Down
+window.saveSelection = ->
+  sel = window.getSelection()
+
+  if sel.getRangeAt and sel.rangeCount
+    ranges = []
+    for i in [0..sel.rangeCount-1]
+      ranges.push(sel.getRangeAt(i))
+    return ranges
+
+  return false
+
+window.restoreSelection = (savedSel) ->
+  sel = window.getSelection()
+  if savedSel
+    sel.removeAllRanges()
+    for i in [0..savedSel.length-1]
+      sel.addRange(savedSel[i])

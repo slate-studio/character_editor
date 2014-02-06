@@ -10,7 +10,6 @@
   inst.serialize()
 ###
 
-#= require jquery
 #= require_self
 #= require character_editor/_selection
 #= require character_editor/_toolbar
@@ -34,6 +33,7 @@
     secondHeader:                 'h4'
     tabSpaces:                    '    '
     viewSelector:                 'body'
+    parentElements:               ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre']
 
   data_options: ->
     result = {}
@@ -69,9 +69,6 @@
     # Mix in the passed-in options with the default options
     @options = $.extend({}, @options, @data_options(), options)
 
-    @isActive = true
-    @parentElements = ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre']
-
     # Build the DOM's initial structure
     @_build()
 
@@ -100,9 +97,6 @@
       @toolbar = Object.create(CharacterEditor.Toolbar).init(@options, $toolbarElement)
 
       window.characterEditorToolbar = @toolbar
-
-    #     .bindButtons()
-    #     .bindAnchorForm();
 
   _setPlaceholder: ->
     @$elem.attr('data-placeholder', @options.placeholder)
