@@ -78,16 +78,14 @@ $link_color: #fff;
                                         color: #fff;
   input[type='text'], a               { font-family: HelveticaNeue, Helvetica, Arial, sans-serif;
   }
-  input[type='text']                  { background-color: transparent!important;
-                                        display: inline;
-                                        margin: 0;
+  input[type='text']                  { display: inline;
                                         padding: 6px;
-                                        height: $button_size!important;
-                                        width: 380px; //316px;
-                                        background: $bgcolor;
-                                        border: none;
+                                        height: $button_size;
+                                        background-color: $bgcolor!important;
                                         color: $link_color;
+                                        border: none;
                                         font-size: 14px;
+                                        margin: 0;
                                         //@include box-sizing(border-box);
     &:focus                           { outline: 0;
                                         border: none;
@@ -97,9 +95,8 @@ $link_color: #fff;
   a                                   { color: $link_color;
                                         font-weight: bolder;
                                         font-size: 24px;
-                                        display: inline-block;
-                                        margin: 0 10px;
                                         text-decoration: none;
+                                        padding: 0 13px;
     &:hover                           { color: $link_color;
                                         opacity: .8;
     }
@@ -110,7 +107,7 @@ $link_color: #fff;
                                         display: block;
                                         position: absolute;
                                         left: 50%;
-                                        margin-left: -8px;
+                                        margin-left: -5px;
                                         width: 0;
                                         height: 0;
                                         border-style: solid;
@@ -118,12 +115,12 @@ $link_color: #fff;
 
 .character-toolbar-arrow-under:after  { @extend %character-toolbar-arrow;
                                         top: $button_size;
-                                        border-width: 8px 8px 0 8px;
+                                        border-width: 5px 5px 0 5px;
                                         border-color: $bgcolor transparent transparent transparent;
 }
 
 .character-toolbar-arrow-over:before { @extend %character-toolbar-arrow;
-                                      top: -8px;
-                                      border-width: 0 8px 8px 8px;
+                                      top: -5px;
+                                      border-width: 0 5px 5px 5px;
                                       border-color: transparent transparent $bgcolor transparent;
 }

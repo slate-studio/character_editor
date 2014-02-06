@@ -18,7 +18,4 @@ Gem::Specification.new do |gem|
 
   # Supress the warning about no rubyforge project
   gem.rubyforge_project = 'nowarning'
-
-  gem.add_runtime_dependency 'jquery-rails'
-  gem.add_runtime_dependency 'coffee-rails'
 end

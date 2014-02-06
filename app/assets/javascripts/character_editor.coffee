@@ -4,10 +4,10 @@
 * Licensed under the MIT license
 
   Usage:
-
   $('#editor').editor({placeholder: 'Title' })
   inst = $('#editor').data('editor')
   inst.serialize()
+
 ###
 
 #= require_self
@@ -35,7 +35,7 @@
     viewSelector:                 'body'
     parentElements:               ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre']
 
-  data_options: ->
+  _dataOptions: ->
     result = {}
     dataOptions = @$elem.attr('data-options')
     if dataOptions
@@ -61,21 +61,15 @@
     return result
 
   init: (options, elem) ->
-    # Save the element reference, both as a jQuery
-    # reference and a normal reference
     @elem = elem
     @$elem = $(elem)
 
-    # Mix in the passed-in options with the default options
-    @options = $.extend({}, @options, @data_options(), options)
+    @options = $.extend({}, @options, @_dataOptions(), options)
 
-    # Build the DOM's initial structure
     @_build()
 
-    # Bind events
     @_bind()
 
-    # return this so that we can chain and use the bridge with less code.
     @
 
   _build: ->
@@ -117,7 +111,6 @@
     @_bindReturn()
     @_bindTab()
     @_bindPaste()
-    # @bindWindowActions()
 
   _bindNewParagraph: ->
     @$elem.on 'keyup', (e) =>

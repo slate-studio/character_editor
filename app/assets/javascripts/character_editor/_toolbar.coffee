@@ -1,24 +1,18 @@
 
 @CharacterEditor.Toolbar =
   init: (options, elem) ->
-    # Mix in the passed-in options with the default options
     @options = $.extend({}, @options, options)
 
-    # Save the element reference, both as a jQuery
-    # reference and a normal reference
     @elem = elem
     @$elem = $(elem)
 
-    # Build the DOM's initial structure
+    # this helps to not hide toolbar on selection (while toolbar button click)
+    @keepToolbarVisible = false
+
     @_build()
 
-    @_bindSelect()
-    @_bindWindowResize()
-    @_bindButtons()
-    @_bindAnchorForm()
+    @_bind()
 
-
-    # return this so that we can chain and use the bridge with less code.
     @
 
   options:
@@ -86,32 +80,43 @@
     return templates[key]
 
   _build: ->
-    html = """<ul id='character_editor_toolbar_actions' class='character-editor-toolbar-actions'>"""
+    html = """<ul id='character_editor_toolbar_buttons'>"""
 
-    $.each @options.buttons, (i, key) =>
-      html += @_buttonTemplate(key)
+    $.each @options.buttons, (i, key) => html += @_buttonTemplate(key)
 
     html += """</ul>
      <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
-       <input type='text' value='' placeholder='#{ @options.anchorInputPlaceholder }'>
-       <a href='#'>&times;</a>
+       <input type='text' value='' placeholder='#{ @options.anchorInputPlaceholder }'><a href='#'>&times;</a>
      </div>"""
     @$elem.html(html)
 
+    @$toolbarButtons = @$elem.find('#character_editor_toolbar_buttons')
     @$anchorForm     = @$elem.find('#character_editor_toolbar_form_anchor')
     @$anchorInput    = @$anchorForm.children('input')
-    @$toolbarActions = @$elem.find('#character_editor_toolbar_actions')
 
+    buttonWidth = @$toolbarButtons.find('button').first().width()
+    @$anchorInput.css('width', (@options.buttons.length - 1) * buttonWidth + @options.buttons.length - 1)
+
+    @$toolbarButtons.show()
     @$anchorForm.hide()
 
-  _hideActions: ->
+  _bind: ->
+    @_bindWindowResize()
+    @_bindButtons()
+    @_bindAnchorForm()
+    @_bindSelect()
+
+  _hide: ->
+    @keepToolbarVisible = false
     @$elem.removeClass('character-editor-toolbar-active')
 
-  _showActions: ->
-    timer    = ''
+  _show: ->
+    timer = ''
+
 
     @$anchorForm.hide()
-    @$toolbarActions.show()
+    @$toolbarButtons.show()
+    @keepToolbarVisible = false
 
     clearTimeout(timer)
 
@@ -174,8 +179,10 @@
       toolbar = @
 
       $(@options.viewSelector).on 'mouseup keyup blur', (e) =>
+        console.log $(e.target).parents('#character_editor_toolbar')
+
         clearTimeout(timer)
-        timer = setTimeout ( -> toolbar._checkSelection() ), @options.delay
+        timer = setTimeout ( -> console.log 'select' ; toolbar._checkSelection() ), @options.delay
 
   _bindWindowResize: ->
     timer = ''
@@ -184,31 +191,31 @@
       timer = setTimeout ( => if @$elem.hasClass('character-editor-toolbar-active') then @_setPosition() ), 100
 
   _getActiveEditor: ->
-    selection = window.getSelection()
-    $editorElement = $(selection.getRangeAt(0).commonAncestorContainer).parents('[data-editor-element]')
+    $editorElement = $(@selection.getRangeAt(0).commonAncestorContainer).parents('[data-editor-element]')
     if $editorElement then $editorElement.data('editor') else false
 
   _checkSelection: ->
-    newSelection  = window.getSelection()
-    selectionHtml = getSelectionHtml()
-    selectionHtml = selectionHtml.replace(/<[\S]+><\/[\S]+>/gim, '')
+    if not @keepToolbarVisible
+      @selection  = window.getSelection()
 
-    # Check if selection is between multi paragraph <p>.
-    hasMultiParagraphs = selectionHtml.match(/<(p|h[0-6]|blockquote)>([\s\S]*?)<\/(p|h[0-6]|blockquote)>/g)
-    hasMultiParagraphs = if hasMultiParagraphs then hasMultiParagraphs.length else 0
+      if @selection.toString().trim() == ''
+        return @_hide()
 
-    if newSelection.toString().trim() == '' or ( !@options.allowMultiParagraphSelection and hasMultiParagraphs)
-      @_hideActions()
-    else
-      @selection   = newSelection
       activeEditor = @_getActiveEditor()
-
       if !activeEditor or activeEditor.options.disableToolbar
-        @_hideActions()
-      else
-        @_setButtonStates()
-        @_setPosition()
-        @_showActions()
+        return @_hide()
+
+      selectionHtml = getSelectionHtml()
+      selectionHtml = selectionHtml.replace(/<[\S]+><\/[\S]+>/gim, '')
+
+      hasMultiParagraphs = selectionHtml.match(/<(p|h[0-6]|blockquote)>([\s\S]*?)<\/(p|h[0-6]|blockquote)>/g)
+
+      if !@options.allowMultiParagraphSelection and hasMultiParagraphs
+        return @_hide()
+
+      @_setButtonStates()
+      @_setPosition()
+      @_show()
 
   _setButtonStates: ->
     $buttons = @$elem.find('button')
@@ -273,12 +280,16 @@
     if @selection.anchorNode.parentNode.tagName.toLowerCase() == 'a'
       document.execCommand('unlink', false, null)
     else
-      if @$anchorForm.is(':visible') then @_showActions() else @_showAnchorForm()
+      if @$anchorForm.is(':visible') then @_show() else @_showAnchorForm()
 
   _showAnchorForm: ->
+    @keepToolbarVisible = true
+
     @savedSelection = window.saveSelection()
-    @$toolbarActions.hide()
+
     @$anchorForm.show()
+    @$toolbarButtons.hide()
+
     @$anchorInput.focus()
     @$anchorInput.val('')
 
@@ -290,9 +301,6 @@
       e.preventDefault()
       e.stopPropagation()
 
-      if not toolbar.selection
-        toolbar._checkSelection()
-
       $button = $(e.currentTarget)
       $button.toggleClass('character-editor-button-active')
 
@@ -301,7 +309,7 @@
 
     $buttons.on 'click', triggerAction
 
-  setTargetBlank: ->
+  _setTargetBlank: ->
     el = window.getSelectionStart()
 
     if el.tagName.toLowerCase() == 'a'
@@ -309,13 +317,14 @@
     else
       $(el).find('a').each (i, el) -> $(el).attr('target', '_blank')
 
-  createLink: (input) ->
+  _createLink: (input) ->
     window.restoreSelection(@savedSelection)
     document.execCommand('createLink', false, @$anchorInput.val())
-    if @options.targetBlank
-      @setTargetBlank()
 
-    @showActions()
+    if @options.targetBlank
+      @_setTargetBlank()
+
+    @_show()
     @$anchorInput.val('')
 
   _bindAnchorForm: ->
@@ -325,14 +334,13 @@
     @$anchorInput.on 'keyup', (e) =>
       if e.keyCode == 13
         e.preventDefault()
-        @createLink()
+        @_createLink()
 
     @$anchorInput.on 'blur', (e) =>
-      @_checkSelection()
+      @keepToolbarVisible = false
 
     @$anchorForm.find('a').on 'click', (e) =>
       e.preventDefault()
-      @_showActions()
       window.restoreSelection(@savedSelection)
 
   destroy: ->
