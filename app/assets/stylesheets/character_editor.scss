@@ -1,0 +1,14 @@
+.character-editor                     {
+  &:focus                             { outline: 0;
+  }
+}
+
+.character-editor-placeholder         { position: relative;
+  &:after                             { position: absolute;
+                                        content: attr(data-placeholder);
+                                        top: 0;
+                                        left: 0;
+                                        font-style: italic;
+                                        opacity: .5;
+    }
+}

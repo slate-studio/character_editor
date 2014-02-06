@@ -5,8 +5,7 @@ Gem::Specification.new do |gem|
   gem.name          = 'character_editor'
   gem.version       = Character::Editor::VERSION
   gem.summary       = 'Character WYSIWYG editor'
-  gem.description   = ''
-  gem.license       = ''
+  gem.license       = 'MIT'
 
   gem.authors       = ['Alexander Kravets']
   gem.email         = 'alex@slatestudio.com'
@@ -19,4 +18,7 @@ Gem::Specification.new do |gem|
 
   # Supress the warning about no rubyforge project
   gem.rubyforge_project = 'nowarning'
+
+  gem.add_runtime_dependency 'jquery-rails'
+  gem.add_runtime_dependency 'coffee-rails'
 end
