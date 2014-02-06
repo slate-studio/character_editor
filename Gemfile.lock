@@ -1,0 +1,14 @@
+PATH
+  remote: .
+  specs:
+    character_medium_editor (0.0.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  character_medium_editor!
