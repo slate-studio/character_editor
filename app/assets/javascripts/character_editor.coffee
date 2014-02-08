@@ -20,7 +20,7 @@
   options:
     allowMultiParagraphSelection: true
     anchorInputPlaceholder:       'Paste or type a link'
-    buttons:                      ['bold', 'italic', 'underline', 'anchor', 'header1', 'header2', 'quote']
+    buttons:                      'bold, italic, underline, anchor, header1, header2, quote'
     delay:                        0
     diffLeft:                     0
     diffTop:                      -10

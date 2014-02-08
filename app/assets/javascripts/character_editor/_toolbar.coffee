@@ -30,7 +30,7 @@
       unorderedlist:  '<i class="fa fa-list-ul"></i>'
       pre:            '<i class="fa fa-code fa-lg"></i>'
       header1:        '<b>H1</b>'
-      header2:        '<b>H1</b>'
+      header2:        '<b>H2</b>'
 
   _buttonTemplate: (key) ->
     l               = @options.buttonLabels
@@ -82,7 +82,7 @@
   _build: ->
     html = """<ul id='character_editor_toolbar_buttons'>"""
 
-    $.each @options.buttons, (i, key) => html += @_buttonTemplate(key)
+    $.each @options.buttons.split(','), (i, key) => html += @_buttonTemplate(key.trim())
 
     html += """</ul>
      <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
