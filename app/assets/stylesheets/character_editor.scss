@@ -1,7 +1,9 @@
-// Default character header colors
+//---------------------------------------------------------
+// CHARACTER EDITOR
+//---------------------------------------------------------
 
-$bgcolor:       #12a0ce;
-$border_color:  #108cb5;
+$bgcolor:       $secondary_color;
+$border_color:  darken($secondary_color, 5%);
 $link_color:    #fff;
 $button_size:   40px;
 
