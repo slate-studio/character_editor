@@ -179,10 +179,8 @@
       toolbar = @
 
       $(@options.viewSelector).on 'mouseup keyup blur', (e) =>
-        console.log $(e.target).parents('#character_editor_toolbar')
-
         clearTimeout(timer)
-        timer = setTimeout ( -> console.log 'select' ; toolbar._checkSelection() ), @options.delay
+        timer = setTimeout (-> toolbar._checkSelection()), @options.delay
 
   _bindWindowResize: ->
     timer = ''
