@@ -190,7 +190,6 @@
 
   _bindButtons: ->
     toolbar  = @
-    $buttons = @$elem.find('button')
 
     triggerAction = (e) ->
       e.preventDefault()
@@ -202,7 +201,7 @@
       action = $button.attr('data-action')
       toolbar._execAction(action, e)
 
-    $buttons.on 'click', triggerAction
+    $(document).on 'click', '#character_editor_toolbar_buttons button', triggerAction
 
   _setTargetBlank: ->
     el = window.getSelectionStart()
@@ -244,5 +243,5 @@
     @$anchorForm.off 'click'
     @$anchorForm.find('a').off 'click'
     @$anchorInput.on 'keyup blur'
-    @$elem.find('button').off 'click'
+    $(document).off 'click', '#character_editor_toolbar_buttons button'
     @$elem.remove()
