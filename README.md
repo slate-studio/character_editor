@@ -4,9 +4,8 @@ Based on [MediumEditor](https://github.com/daviferreira/medium-editor) — Mediu
 
 ## TODO:
  - fix copy/paste in the editor (test Safari/Chrome/FF, might be related to span issue)
- - flexible toolbar settings
- - insert images
  - pre tag is not removed when unset
+ - insert images (integrate with Character assets plugin)
 
 ### Span Issue: happens only in Chrome
 
