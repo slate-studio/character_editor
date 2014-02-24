@@ -22,7 +22,8 @@
   _build: ->
     html = """<ul id='character_editor_toolbar_buttons'>"""
 
-    $.each @options.buttons.split(','), (i, key) => html += @_buttonTemplates[key.trim()]
+    allButtons = [ 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'anchor', 'image', 'quote', 'orderedlist', 'unorderedlist', 'pre', 'header1', 'header2' ]
+    $.each allButtons, (i, key) => html += @_buttonTemplates[key]
 
     html += """</ul>
      <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
@@ -49,12 +50,14 @@
   _hide: ->
     @keepToolbarVisible = false
     @$elem.removeClass('character-editor-toolbar-active')
+    @$toolbarButtons.removeClass()
 
   _show: ->
     timer = ''
 
-
     @$anchorForm.hide()
+    buttonClasses = 'CET-show-' + @_getActiveEditor().options.buttons.split(' ').join(' CET-show-')
+    @$toolbarButtons.addClass(buttonClasses)
     @$toolbarButtons.show()
     @keepToolbarVisible = false
 
@@ -152,8 +155,8 @@
         return @_hide()
 
       @_setButtonStates()
-      @_setPosition()
       @_show()
+      @_setPosition()
 
   _setButtonStates: ->
     $buttons = @$elem.find('button')

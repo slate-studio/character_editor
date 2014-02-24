@@ -41,8 +41,7 @@ $button_size:   40px;
     &:last-child button               { border-right: none;
     }
 
-    button                            { display: block;
-                                        padding: 0px;
+    button                            { padding: 0px;
                                         margin: 0;
                                         height: $button_size;
                                         min-width: $button_size;
@@ -117,4 +116,36 @@ $button_size:   40px;
                                       top: -5px;
                                       border-width: 0 5px 5px 5px;
                                       border-color: transparent transparent $bgcolor transparent;
+}
+
+.character-editor-action-bold,
+.character-editor-action-italic,
+.character-editor-action-underline,
+.character-editor-action-strikethrough,
+.character-editor-action-superscript,
+.character-editor-action-subscript,
+.character-editor-action-anchor,
+.character-editor-action-image,
+.character-editor-action-quote,
+.character-editor-action-orderedlist,
+.character-editor-action-unorderedlist,
+.character-editor-action-pre,
+.character-editor-action-header1,
+.character-editor-action-header2 { display: none;
+}
+// [C]haracter [E]ditor [T]oolbar
+ul.CET-show-bold           .character-editor-action-bold,
+ul.CET-show-italic         .character-editor-action-italic,
+ul.CET-show-underline      .character-editor-action-underline,
+ul.CET-show-strikethrough  .character-editor-action-strikethrough,
+ul.CET-show-superscript    .character-editor-action-superscript,
+ul.CET-show-subscript      .character-editor-action-subscript,
+ul.CET-show-anchor         .character-editor-action-anchor,
+ul.CET-show-image          .character-editor-action-image,
+ul.CET-show-quote          .character-editor-action-quote,
+ul.CET-show-orderedlist    .character-editor-action-orderedlist,
+ul.CET-show-unorderedlist  .character-editor-action-unorderedlist,
+ul.CET-show-pre            .character-editor-action-pre,
+ul.CET-show-header1        .character-editor-action-header1,
+ul.CET-show-header2        .character-editor-action-header2 { display: block;
 }
