@@ -25,11 +25,13 @@
 
   edgeOffset = 5
 
+  # TODO: some issues still happen here, on double click (right edge) and right edge text selection
+
   if middleBoundary < halfOffsetWidth
     @$elem.css { left: "#{edgeOffset}px", right: 'auto' }
     $arrow.css { 'margin-left': -($toolbarWidth/2 - middleBoundary + 10) } # arrow to left
 
-  else if (contentInnerWidth - middleBoundary) < halfOffsetWidth
+  else if (contentInnerWidth - middleBoundary) <= halfOffsetWidth
     @$elem.css { left: 'auto', right: "#{edgeOffset}px" }
     $arrow.css { 'margin-left': (middleBoundary - $toolbarLeft - $toolbarWidth/2 - 5) } # arrow to right
 
