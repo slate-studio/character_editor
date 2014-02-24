@@ -56,8 +56,8 @@
                                  data-action='append-pre' data-element='pre'>#{ l.pre }</button></li>"
 
     header1:        "<li><button class='#{classPrefix} #{classPrefix}-header1'
-                                 data-action='append-#{ l.header1 }' data-element='#{ l.header1 }'>#{ l.header1 }</button></li>"
+                                 data-action='append-#{ options.firstHeader }' data-element='#{ options.firstHeader }'>#{ l.header1 }</button></li>"
 
     header2:        "<li><button class='#{classPrefix} #{classPrefix}-header2'
-                                 data-action='append-#{ l.header2 }' data-element='#{ l.header2 }'>#{ l.header2 }</button></li>"
+                                 data-action='append-#{ options.secondHeader }' data-element='#{ options.secondHeader }'>#{ l.header2 }</button></li>"
   return templates

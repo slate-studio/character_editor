@@ -12,8 +12,7 @@
 
 #= require_self
 #= require character_editor/_selection
-#= require character_editor/_toolbar
-#= require character_editor/_templates
+#= require character_editor/toolbar/_toolbar
 
 # Object - an object representing a concept that you want
 # to model (e.g. a car)
@@ -30,8 +29,8 @@
     forcePlainText:               true
     placeholder:                  'Type your text...'
     targetBlank:                  false
-    firstHeader:                  'h3'
-    secondHeader:                 'h4'
+    firstHeader:                  'h2'
+    secondHeader:                 'h3'
     tabSpaces:                    '    '
     viewSelector:                 'body'
     parentElements:               ['p', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'pre']
