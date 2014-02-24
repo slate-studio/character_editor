@@ -81,15 +81,10 @@
     if not @options.disableToolbar
       @_addToolbar()
 
-  _addToolbar: -> # create only one toolbar for now
+  _addToolbar: ->
     @toolbar = window.characterEditorToolbar
-
     if not @toolbar
-      $toolbarElement = $("<div id='character_editor_toolbar' class='character-editor-toolbar' />")
-      $(@options.viewSelector).append($toolbarElement)
-
-      @toolbar = Object.create(CharacterEditor.Toolbar).init(@options, $toolbarElement)
-
+      @toolbar = Object.create(CharacterEditor.Toolbar).init(@options)
       window.characterEditorToolbar = @toolbar
 
   _setPlaceholder: ->

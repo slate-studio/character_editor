@@ -8,8 +8,8 @@
 
     @_buttonTemplates = @_generateButtonTemplates(@options)
 
-    @elem = elem
-    @$elem = $(elem)
+    @$elem = $(@_toolbarTemplate(@options))
+    $(@options.viewSelector).append(@$elem)
 
     # this helps to not hide toolbar on selection (while toolbar button click)
     @keepToolbarVisible = false
@@ -23,12 +23,6 @@
   options: {}
 
   _build: ->
-    html = """<ul id='character_editor_toolbar_buttons'></ul>
-              <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
-               <input type='text' value='' placeholder='#{ @options.anchorInputPlaceholder }'><a href='#'>&times;</a>
-              </div>"""
-    @$elem.html(html)
-
     @$toolbarButtons = @$elem.find('#character_editor_toolbar_buttons')
     @$anchorForm     = @$elem.find('#character_editor_toolbar_form_anchor')
     @$anchorInput    = @$anchorForm.children('input')
@@ -52,10 +46,11 @@
 
     @$anchorForm.hide()
 
+    # TODO: this can be optimized to do not change DOM
     html = ''
     $.each @options.buttons.split(' '), (i, key) => html += @_buttonTemplates[key]
-
     @$toolbarButtons.html(html)
+
     @$toolbarButtons.show()
 
     @$anchorInput.css('width', @$elem.width() - 40 - 12) # TODO: remove build in themes values

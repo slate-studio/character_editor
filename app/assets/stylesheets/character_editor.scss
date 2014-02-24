@@ -7,15 +7,6 @@ $border_color:  darken($secondary_color, 5%);
 $link_color:    #fff;
 $button_size:   40px;
 
-// https://github.com/michaelsacca/Compass-Placeholder-Text-Mixin
-@mixin input-placeholder              {
-  &.placeholder                       { @content; }
-  &:-moz-placeholder                  { @content; }
-  &::-moz-placeholder                 { @content; }
-  &:-ms-input-placeholder             { @content; }
-  &::-webkit-input-placeholder        { @content; }
-}
-
 .character-editor                     {
   &:focus                             { outline: 0;
   }
