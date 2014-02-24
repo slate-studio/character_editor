@@ -33,10 +33,6 @@
     @$anchorForm     = @$elem.find('#character_editor_toolbar_form_anchor')
     @$anchorInput    = @$anchorForm.children('input')
 
-    # TODO: update this
-    buttonWidth = @$toolbarButtons.find('button').first().width()
-    @$anchorInput.css('width', (@options.buttons.length - 1) * buttonWidth + @options.buttons.length - 1)
-
     @$toolbarButtons.show()
     @$anchorForm.hide()
 
@@ -61,6 +57,9 @@
 
     @$toolbarButtons.html(html)
     @$toolbarButtons.show()
+
+    @$anchorInput.css('width', @$elem.width() - 40 - 12) # TODO: remove build in themes values
+
     @keepToolbarVisible = false
 
     clearTimeout(timer)
