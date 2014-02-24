@@ -5,6 +5,7 @@
     <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
       <input type='text' value='' placeholder='#{ options.anchorInputPlaceholder }'><a href='#'>&times;</a>
     </div>
+    <div class='character-editor-toolbar-arrow'></div>
   </div>"""
 
 @CharacterEditor.Toolbar._generateButtonTemplates = (options) ->
