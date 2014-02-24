@@ -23,21 +23,17 @@
   options: {}
 
   _build: ->
-    html = """<ul id='character_editor_toolbar_buttons'>"""
-
-    allButtons = [ 'bold', 'italic', 'underline', 'strikethrough', 'superscript', 'subscript', 'anchor', 'image', 'quote', 'orderedlist', 'unorderedlist', 'pre', 'header1', 'header2' ]
-    $.each allButtons, (i, key) => html += @_buttonTemplates[key]
-
-    html += """</ul>
-     <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
-       <input type='text' value='' placeholder='#{ @options.anchorInputPlaceholder }'><a href='#'>&times;</a>
-     </div>"""
+    html = """<ul id='character_editor_toolbar_buttons'></ul>
+              <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
+               <input type='text' value='' placeholder='#{ @options.anchorInputPlaceholder }'><a href='#'>&times;</a>
+              </div>"""
     @$elem.html(html)
 
     @$toolbarButtons = @$elem.find('#character_editor_toolbar_buttons')
     @$anchorForm     = @$elem.find('#character_editor_toolbar_form_anchor')
     @$anchorInput    = @$anchorForm.children('input')
 
+    # TODO: update this
     buttonWidth = @$toolbarButtons.find('button').first().width()
     @$anchorInput.css('width', (@options.buttons.length - 1) * buttonWidth + @options.buttons.length - 1)
 
@@ -59,8 +55,11 @@
     timer = ''
 
     @$anchorForm.hide()
-    buttonClasses = 'CET-show-' + @_getActiveEditor().options.buttons.split(' ').join(' CET-show-')
-    @$toolbarButtons.addClass(buttonClasses)
+
+    html = ''
+    $.each @options.buttons.split(' '), (i, key) => html += @_buttonTemplates[key]
+
+    @$toolbarButtons.html(html)
     @$toolbarButtons.show()
     @keepToolbarVisible = false
 
