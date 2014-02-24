@@ -13,6 +13,7 @@
 #= require_self
 #= require character_editor/_selection
 #= require character_editor/_toolbar
+#= require character_editor/_templates
 
 # Object - an object representing a concept that you want
 # to model (e.g. a car)

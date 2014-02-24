@@ -3,6 +3,8 @@
   init: (options, elem) ->
     @options = $.extend({}, @options, options)
 
+    @_buttonTemplates = @_generateButtonTemplates(@options)
+
     @elem = elem
     @$elem = $(elem)
 
@@ -15,74 +17,12 @@
 
     @
 
-  options:
-    buttonLabels:
-      bold:           '<i class="fa fa-bold"></i>'
-      italic :        '<i class="fa fa-italic"></i>'
-      underline:      '<i class="fa fa-underline"></i>'
-      strikethrough:  '<i class="fa fa-strikethrough"></i>'
-      superscript:    '<i class="fa fa-superscript"></i>'
-      subscript:      '<i class="fa fa-subscript"></i>'
-      anchor:         '<i class="fa fa-link"></i>'
-      image:          '<i class="fa fa-picture-o"></i>'
-      quote:          '<i class="fa fa-quote-right"></i>'
-      orderedlist:    '<i class="fa fa-list-ol"></i>'
-      unorderedlist:  '<i class="fa fa-list-ul"></i>'
-      pre:            '<i class="fa fa-code fa-lg"></i>'
-      header1:        '<b>H1</b>'
-      header2:        '<b>H2</b>'
-
-  _buttonTemplate: (key) ->
-    l               = @options.buttonLabels
-    classPrefix     = 'character-editor-action'
-    templates =
-      bold:           "<li><button class='#{classPrefix} #{classPrefix}-bold'
-                                   data-action='bold' data-element='b'>#{ l.bold }</button></li>"
-
-      italic:         "<li><button class='#{classPrefix} #{classPrefix}-italic'
-                                   data-action='italic' data-element='i'>#{ l.italic }</button></li>"
-
-      underline:      "<li><button class='#{classPrefix} #{classPrefix}-underline'
-                                   data-action='underline' data-element='u'>#{ l.underline }</button></li>"
-
-      strikethrough:  "<li><button class='#{classPrefix} #{classPrefix}-strikethrough'
-                                   data-action='strikethrough' data-element='strike'>#{ l.strikethrough }</button></li>"
-
-      superscript:    "<li><button class='#{classPrefix} #{classPrefix}-superscript'
-                                   data-action='superscript' data-element='sup'>#{ l.superscript }</button></li>"
-
-      subscript:      "<li><button class='#{classPrefix} #{classPrefix}-subscript'
-                                   data-action='subscript' data-element='sub'>#{ l.subscript }</button></li>"
-
-      anchor:         "<li><button class='#{classPrefix} #{classPrefix}-anchor'
-                                   data-action='anchor' data-element='a'>#{ l.anchor }</button></li>"
-
-      image:          "<li><button class='#{classPrefix} #{classPrefix}-image'
-                                   data-action='image' data-element='img'>#{ l.image }</button></li>"
-
-      quote:          "<li><button class='#{classPrefix} #{classPrefix}-quote'
-                                   data-action='append-blockquote' data-element='blockquote'>#{ l.quote }</button></li>"
-
-      orderedlist:    "<li><button class='#{classPrefix} #{classPrefix}-orderedlist'
-                                   data-action='insertorderedlist' data-element='ol'>#{ l.orderedlist }</button></li>"
-
-      unorderedlist:  "<li><button class='#{classPrefix} #{classPrefix}-unorderedlist'
-                                   data-action='insertunorderedlist' data-element='ul'>#{ l.unorderedlist }</button></li>"
-
-      pre:            "<li><button class='#{classPrefix} #{classPrefix}-pre'
-                                   data-action='append-pre' data-element='pre'>#{ l.pre }</button></li>"
-
-      header1:        "<li><button class='#{classPrefix} #{classPrefix}-header1'
-                                   data-action='append-#{ @options.firstHeader }' data-element='#{ @options.firstHeader }'>#{ l.header1 }</button></li>"
-
-      header2:        "<li><button class='#{classPrefix} #{classPrefix}-header2'
-                                   data-action='append-#{ @options.secondHeader }' data-element='#{ @options.secondHeader }'>#{ l.header2 }</button></li>"
-    return templates[key]
+  options: {}
 
   _build: ->
     html = """<ul id='character_editor_toolbar_buttons'>"""
 
-    $.each @options.buttons.split(','), (i, key) => html += @_buttonTemplate(key.trim())
+    $.each @options.buttons.split(','), (i, key) => html += @_buttonTemplates[key.trim()]
 
     html += """</ul>
      <div class='character-editor-toolbar-form-anchor' id='character_editor_toolbar_form_anchor'>
