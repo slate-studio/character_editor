@@ -13,6 +13,7 @@
 #= require_self
 #= require character_editor/_selection
 #= require character_editor/toolbar/_toolbar
+#= require character_editor/insert/_insert
 
 # Object - an object representing a concept that you want
 # to model (e.g. a car)
@@ -26,6 +27,7 @@
     diffTop:                      -10
     disableReturn:                false
     disableToolbar:               false
+    disableInsert:                false
     forcePlainText:               true
     placeholder:                  'Type your text...'
     targetBlank:                  false
@@ -80,6 +82,16 @@
 
     if not @options.disableToolbar
       @_addToolbar()
+
+    if not @options.disableInsert
+      @$elem.addClass 'character-editor-insert-enabled'
+      @_addInsert()
+
+  _addInsert: ->
+    @insert = window.characterEditorInsert
+    if not @insert
+      @insert = Object.create(CharacterEditor.Insert).init(@options)
+      window.characterEditorInsert = @insert
 
   _addToolbar: ->
     @toolbar = window.characterEditorToolbar
@@ -170,6 +182,11 @@
       @toolbar.destroy()
       delete @toolbar
       delete window.characterEditorToolbar
+
+    if @insert
+      @insert.destroy()
+      delete @insert
+      delete window.characterEditorInsert
 
 # Object.create support test, and fallback for browsers without it
 if typeof Object.create isnt "function"
