@@ -23,6 +23,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
     delay 50, => if not @stayVisible then @$elem.removeClass('visible')
 
   _show: ($editorElement, offsetY=0) ->
+    # TODO: it looks like we don't need live recalculations, rather can have just a table of positions
     delay 50, =>
       if @stayVisible
         offsetX  = -($(@options.viewSelector).offset().left - $editorElement.offset().left) - 5 # '+' moves to the right
@@ -57,6 +58,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
             offsetY += parseInt $editorElement.children().first().css('margin-top')
         else
           # find block above cursor
+          # TODO: we need too improve this, right now there is an issue when <block1 bMargin> != <block2 tMargin>
           y = parseInt $editorElement.css('padding-top')
           $editorElement.children().each (i, el) =>
             $block       = $(el)
@@ -78,21 +80,39 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
       @stayVisible = false
       @_hide()
 
-    $('#character_editor_insert_button').on 'click', (e) =>
-      @$insertAfterBlock.after("""<figure class='character-image-upload' contenteditable='false' data-editor-image></figure>""")
-      # mount uploader
 
   _bindImage: ->
+    updateFigureImg = ($el, data) ->
+      imageUrl = data.image.url
+      $el.children('img').remove()
+      $el.addClass('character-image').append("<img src='#{ imageUrl }' />")
+
+    attachDropzone = ($el) ->
+      $el.fileupload
+        url: '/admin/Character-Image'
+        paramName: 'character_image[image]'
+        dataType:  'json'
+        dropZone:  $el
+        done: (e, data) ->
+          updateFigureImg($el, data.result.image)
+
     $(document).on 'click', '[data-editor-image]', (e) ->
       $el = $(e.currentTarget)
-      console.log $el
-      chr.execute 'showImages', true, (images) =>
+      chr.execute 'showImages', true, (images) ->
         # TODO: add support for multiple images
         model = images[0]
         if model
-          imageUrl = model.get('image').image.url
-          $el.children('img').remove()
-          $el.addClass('character-image').append("<img src='#{ imageUrl }' />")
+          updateFigureImg($el, model.get('image'))
+
+    $('#character_editor_insert_button').on 'click', (e) =>
+      $el = $("""<figure class='character-image-upload' contenteditable='false' data-editor-image></figure>""")
+      $el.insertAfter(@$insertAfterBlock)
+      attachDropzone($el)
+
+    $('[data-editor-image]').each (i, el) -> attachDropzone $(el)
+
+    # TODO: delete uploader when removing image figure
+
 
   destroy: ->
     $(document).off 'mousemove, mouseleave', '.character-editor-insert-enabled'
