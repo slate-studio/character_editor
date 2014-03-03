@@ -1,10 +1,12 @@
 #= require_self
 
+window.delay = (ms, fnc) -> setTimeout(fnc, ms)
+
 @CharacterEditor.Insert =
   init: (options, elem) ->
     @options = $.extend({}, @options, options)
 
-    @$elem = $("<div id='character_editor_insert' class='character-editor-insert'><i class='chr-icon icon-plus-alt'></i></div>")
+    @$elem = $("<div id=character_editor_insert_button class='character-editor-insert'><i class='chr-icon icon-plus-alt'></i></div>")
     $(@options.viewSelector).append(@$elem)
 
     @_build()
@@ -16,22 +18,26 @@
   options: {}
 
   _build: ->
-    @_hide()
 
   _hide: ->
-    @$elem.css({ visibility: 'hidden' })
+    delay 50, => if not @stayVisible then @$elem.removeClass('visible')
 
   _show: ($editorElement, offsetY=0) ->
-    offsetX  = -($(@options.viewSelector).offset().left - $editorElement.offset().left) - 20 - 10 # element width, offset
-    offsetY += Math.floor($editorElement.offset().top + $(@options.viewSelector).scrollTop() - $(@options.viewSelector).offset().top)
-    @$elem.css({ top: offsetY, 'margin-left': offsetX, visibility: 'visible' })
+    delay 50, =>
+      if @stayVisible
+        offsetX  = -($(@options.viewSelector).offset().left - $editorElement.offset().left) - 5 # '+' moves to the right
+        offsetY += Math.floor($editorElement.offset().top + $(@options.viewSelector).scrollTop() - $(@options.viewSelector).offset().top)
+        @$elem.css({ top: offsetY, 'margin-left': offsetX }).addClass('visible')
 
   _bind: ->
-    $(document).on 'mousemove', '[data-editor-element]', (e) =>
-      $editorElement = $(e.currentTarget)
-      @currentEditor = $editorElement.data('editor')
+    @$elem.on 'mouseenter', (e) => @stayVisible = true
+    @$elem.on 'mouseleave', (e) => @stayVisible = false ; @_hide()
 
-      if @currentEditor.options.disableInsert
+    $(document).on 'mousemove', '.character-editor-insert-enabled', (e) =>
+      $editorElement = $(e.currentTarget)
+      currentEditor  = $editorElement.data('editor')
+
+      if currentEditor.options.disableInsert
         return
 
       if e.currentTarget == e.target
@@ -41,30 +47,38 @@
         paddingTop = parseInt($editorElement.css('padding-top'))
 
         if $editorElement.children().length > 0
-          paddingTop += parseInt($editorElement.children().first().css('margin-top'))
+          paddingTop += parseInt $editorElement.children().first().css('margin-top')
 
         if e.offsetY <= paddingTop
           # beginning of the editor: do nothing
         else
           # find block above cursor
-          prevBlockOffset = paddingTop
-          $editorElement.children().each (i, el) ->
-            $block = $(el)
-            blockHeight = $block.outerHeight()
+          y = parseInt $editorElement.css('padding-top')
+          $editorElement.children().each (i, el) =>
+            $block       = $(el)
+            blockHeight  = $block.outerHeight(true) - parseInt($block.css('margin-bottom'))
+            y           += blockHeight
 
-            if prevBlockOffset + blockHeight < e.offsetY
-              offsetY = prevBlockOffset + blockHeight
-              prevBlockOffset += blockHeight + parseInt($block.css('margin-bottom'))
+            if y < e.offsetY
+              @$insertAfterBlock = $block
+              offsetY            = y
 
+        @stayVisible = true
         @_show($editorElement, offsetY)
 
       else
+        @stayVisible = false
         @_hide()
 
-    $(document).on 'mouseleave', '[data-editor-element]', =>
-      @currentEditor = null
+    $(document).on 'mouseleave', '.character-editor-insert-enabled', =>
+      @stayVisible = false
       @_hide()
 
+    $('#character_editor_insert_button').on 'click', (e) =>
+      @$insertAfterBlock.after("""<figure class="character-image-upload"></figure>""")
+
   destroy: ->
-    $(document).off 'mousemove, mouseleave', '[data-editor-element] > *'
+    $(document).off 'mousemove, mouseleave', '.character-editor-insert-enabled'
+    $('#character_editor_insert_button').off 'click'
+    @$elem.off 'mouseenter, mouseleave'
     @$elem.remove()

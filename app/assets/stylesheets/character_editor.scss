@@ -12,13 +12,25 @@ $button_size:   40px;
                                         height: 20px;
                                         left: 0px;
                                         top: 0px;
-                                        z-index: 2;
+                                        visibility: hidden;
+                                        cursor: pointer;
+                                        box-sizing: border-box;
+                                        z-index: 1;
+  i                                   { width: 16px;
+                                        height: 16px;
+                                        margin-left: 2px;
+                                        margin-top: 2px;
+  }
+  &.visible                           { visibility: visible;
+  }
 }
 
 .character-editor                     {
   &:focus                             { outline: 0;
   }
   &.character-editor-insert-enabled   { padding: 20px 0;
+  }
+  .character-image-upload             { margin: 30px auto;
   }
 }
 
