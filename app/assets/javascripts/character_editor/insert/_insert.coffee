@@ -30,27 +30,31 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
         @$elem.css({ top: offsetY, 'margin-left': offsetX }).addClass('visible')
 
   _bind: ->
+    @_bindHover()
+    @_bindImage()
+
+  _bindHover: ->
     @$elem.on 'mouseenter', (e) => @stayVisible = true
     @$elem.on 'mouseleave', (e) => @stayVisible = false ; @_hide()
 
     $(document).on 'mousemove', '.character-editor-insert-enabled', (e) =>
       $editorElement = $(e.currentTarget)
       currentEditor  = $editorElement.data('editor')
-
       if currentEditor.options.disableInsert
         return
 
       if e.currentTarget == e.target
         # cursor is in between blocks
-
-        offsetY = 0
-        paddingTop = parseInt($editorElement.css('padding-top'))
+        offsetY       = 0
+        paddingTop    = parseInt($editorElement.css('padding-top'))
 
         if $editorElement.children().length > 0
           paddingTop += parseInt $editorElement.children().first().css('margin-top')
 
-        if e.offsetY <= paddingTop
+        if e.offsetY <= paddingTop + 10
           # beginning of the editor: do nothing
+          if $editorElement.children().length > 0
+            offsetY += parseInt $editorElement.children().first().css('margin-top')
         else
           # find block above cursor
           y = parseInt $editorElement.css('padding-top')
@@ -63,7 +67,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
               @$insertAfterBlock = $block
               offsetY            = y
 
-        @stayVisible = true
+        @stayVisible  = true
         @_show($editorElement, offsetY)
 
       else
@@ -75,7 +79,20 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
       @_hide()
 
     $('#character_editor_insert_button').on 'click', (e) =>
-      @$insertAfterBlock.after("""<figure class="character-image-upload"></figure>""")
+      @$insertAfterBlock.after("""<figure class='character-image-upload' contenteditable='false' data-editor-image></figure>""")
+      # mount uploader
+
+  _bindImage: ->
+    $(document).on 'click', '[data-editor-image]', (e) ->
+      $el = $(e.currentTarget)
+      console.log $el
+      chr.execute 'showImages', true, (images) =>
+        # TODO: add support for multiple images
+        model = images[0]
+        if model
+          imageUrl = model.get('image').image.url
+          $el.children('img').remove()
+          $el.addClass('character-image').append("<img src='#{ imageUrl }' />")
 
   destroy: ->
     $(document).off 'mousemove, mouseleave', '.character-editor-insert-enabled'
