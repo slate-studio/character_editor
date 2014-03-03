@@ -86,9 +86,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
   _bindImage: ->
     $('#character_editor_insert_button').on 'click', (e) =>
       chr.execute 'showImages', true, (images) =>
-        # TODO: add support for multiple images
-        model = images[0]
-        if model
+        _.each images.reverse(), (model) =>
           @_insertImage(model.get('image'))
 
   _insertImage: (data) ->
@@ -97,7 +95,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
     if @$insertAfterBlock then $el.insertAfter(@$insertAfterBlock) else $el.prependTo(@$activeEditor)
 
   destroy: ->
-    $(document).off 'mousemove, mouseleave', '.character-editor-insert-enabled'
     $('#character_editor_insert_button').off 'click'
+    $(document).off 'mousemove, mouseleave', '.character-editor-insert-enabled'
     @$elem.off 'mouseenter, mouseleave'
     @$elem.remove()
