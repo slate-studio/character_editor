@@ -7,6 +7,13 @@ $border_color:  darken($secondary_color, 5%);
 $link_color:    #fff;
 $button_size:   40px;
 
+.character-editor                     {
+  &:focus                             { outline: 0;
+  }
+  &.character-editor-insert-enabled   { padding: 20px 0;
+  }
+}
+
 .character-editor-insert              { position: absolute;
                                         width: 20px;
                                         height: 20px;
@@ -22,13 +29,6 @@ $button_size:   40px;
                                         margin-top: 2px;
   }
   &.visible                           { visibility: visible;
-  }
-}
-
-.character-editor                     {
-  &:focus                             { outline: 0;
-  }
-  &.character-editor-insert-enabled   { padding: 20px 0;
   }
 }
 

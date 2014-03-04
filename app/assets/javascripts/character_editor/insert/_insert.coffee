@@ -10,9 +10,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
     $(@options.viewSelector).append(@$elem)
 
     @_build()
-
     @_bind()
-
     @
 
   options: {}
@@ -39,38 +37,37 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
     @$elem.on 'mouseleave', (e) => @stayVisible = false ; @_hide()
 
     $(document).on 'mousemove', '.character-editor-insert-enabled', (e) =>
+      # TODO: block this while scrolling is not stopped
       $editorElement = $(e.currentTarget)
       currentEditor  = $editorElement.data('editor')
+
       if currentEditor.options.disableInsert
         return
 
-      if e.currentTarget == e.target
-        # cursor is in between blocks
-        offsetY       = 0
-        paddingTop    = parseInt($editorElement.css('padding-top'))
+      if e.currentTarget == e.target # no child block is hovered
+        offsetY   = 0
+        editorTop = $editorElement.offset().top
 
         if $editorElement.children().length > 0
-          paddingTop += parseInt $editorElement.children().first().css('margin-top')
+          paddingTop = $editorElement.children().first().offset().top - editorTop
+        else
+          paddingTop = parseInt($editorElement.css('padding-top'))
 
-        if e.offsetY <= paddingTop + 10
-          # beginning of the editor: do nothing
+        if e.offsetY <= paddingTop # beginning of the editor
           if $editorElement.children().length > 0
-            offsetY += parseInt $editorElement.children().first().css('margin-top')
+            offsetY = paddingTop - @$elem.height()
 
           @$insertAfterBlock = false
           @$activeEditor = $editorElement
-        else
-          # find block above cursor
-          # TODO: we need too improve this, right now there is an issue when <block1 bMargin> != <block2 tMargin>
-          y = parseInt $editorElement.css('padding-top')
+
+        else # cursor in between blocks
           $editorElement.children().each (i, el) =>
-            $block       = $(el)
-            blockHeight  = $block.outerHeight(true) - parseInt($block.css('margin-bottom'))
-            y           += blockHeight
+            $block = $(el)
+            y = $block.offset().top - editorTop + $block.height()
 
             if y < e.offsetY
               @$insertAfterBlock = $block
-              offsetY            = y
+              offsetY = y
 
         @stayVisible  = true
         @_show($editorElement, offsetY)
