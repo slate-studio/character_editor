@@ -9,6 +9,8 @@ Based on [MediumEditor](https://github.com/daviferreira/medium-editor) — Mediu
  - buttons for image settings
  - fix placeholder & insert plugin
  - fix insert image after pre
+ - hotkeys
+ - improve toolbar performance (no DOM changes)
 
 ### Span Issue: happens only in Chrome
 

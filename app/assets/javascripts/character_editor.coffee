@@ -10,6 +10,7 @@
 
 ###
 
+#= require keypress
 #= require_self
 #= require character_editor/_selection
 #= require character_editor/toolbar/_toolbar
