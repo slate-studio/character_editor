@@ -73,7 +73,7 @@ $button_size:   40px;
                                         cursor: pointer;
                                         font-size: 14px;
                                         text-decoration: none;
-      &:hover                         { background-color: $border_color;
+      &:hover                         { //background-color: $border_color;
                                         color: #fff;
       }
       &:focus                         { outline: none;
