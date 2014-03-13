@@ -102,9 +102,9 @@
       if !@options.allowMultiParagraphSelection and hasMultiParagraphs
         return @_hide()
 
-      @_setButtonStates()
       @_show()
       @_setPosition()
+      @_setButtonStates()
 
   _setButtonStates: ->
     $buttons = @$elem.find('button')
