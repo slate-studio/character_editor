@@ -53,7 +53,7 @@
 
     @$toolbarButtons.show()
 
-    @$anchorInput.css('width', @$elem.width() - 40 - 12) # TODO: remove build in themes values
+    @$anchorInput.css('width', @$elem.width() - 40) # TODO: remove build in themes values
 
     @keepToolbarVisible = false
 

@@ -95,7 +95,7 @@ $button_size:   40px;
   }
   input[type='text']                  { display: inline;
                                         padding: 6px;
-                                        height: $button_size - 12px;
+                                        height: $button_size;
                                         background-color: $bgcolor!important;
                                         color: $link_color;
                                         border: none;

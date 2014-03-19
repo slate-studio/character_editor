@@ -5,10 +5,10 @@ Based on [MediumEditor](https://github.com/daviferreira/medium-editor) — Mediu
 ## TODO:
  - fix copy/paste in the editor (test Safari/Chrome/FF, might be related to span issue)
  - pre tag is not removed when unset
- - fix buttons state
  - buttons for image settings
- - fix placeholder & insert plugin
+ - fix placeholder
  - fix insert image after pre
+ - figure out default buttons
  - hotkeys
  - improve toolbar performance (no DOM changes)
 
