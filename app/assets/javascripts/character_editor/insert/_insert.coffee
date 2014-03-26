@@ -29,13 +29,16 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
         @$elem.css({ top: offsetY, 'margin-left': offsetX }).addClass('visible')
 
   _bind: ->
-    @_bindHover()
+    @_bindOnHover()
     @_bindImage()
 
-  _bindHover: ->
+  _bindOnHover: ->
     @$elem.on 'mouseenter', (e) => @stayVisible = true
     @$elem.on 'mouseleave', (e) => @stayVisible = false ; @_hide()
+    @_bindMousemove()
+    #$(document).on 'mouseleave', '.character-editor-insert-enabled', => @stayVisible = false ; @_hide()
 
+  _bindMousemove: ->
     $(document).on 'mousemove', '.character-editor-insert-enabled', (e) =>
       # TODO: block this while scrolling is not stopped
       $editorElement = $(e.currentTarget)
@@ -76,10 +79,6 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
         @stayVisible = false
         @_hide()
 
-    $(document).on 'mouseleave', '.character-editor-insert-enabled', =>
-      @stayVisible = false
-      @_hide()
-
   _bindImage: ->
     $('#character_editor_insert_button').on 'click', (e) =>
       chr.execute 'showImages', true, (images) =>
@@ -87,12 +86,12 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
           @_insertImage(model.get('image'))
 
   _insertImage: (data) ->
-    imageUrl = data.image.regular.url
+    imageUrl = data.regular.url
     $el = $("""<figure class='character-image' contenteditable='false'><img src='#{ imageUrl }'></figure>""")
     if @$insertAfterBlock then $el.insertAfter(@$insertAfterBlock) else $el.prependTo(@$activeEditor)
 
   destroy: ->
     $('#character_editor_insert_button').off 'click'
-    $(document).off 'mousemove, mouseleave', '.character-editor-insert-enabled'
+    $(document).off 'mousemove', '.character-editor-insert-enabled'
     @$elem.off 'mouseenter, mouseleave'
     @$elem.remove()
