@@ -86,7 +86,7 @@ window.delay = (ms, fnc) -> setTimeout(fnc, ms)
           @_insertImage(model.get('image'))
 
   _insertImage: (data) ->
-    imageUrl = data.regular.url
+    imageUrl = data.image.regular.url
     $el = $("""<figure class='character-image' contenteditable='false'><img src='#{ imageUrl }'></figure>""")
     if @$insertAfterBlock then $el.insertAfter(@$insertAfterBlock) else $el.prependTo(@$activeEditor)
 
