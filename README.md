@@ -16,3 +16,7 @@ Based on [MediumEditor](https://github.com/daviferreira/medium-editor) — Mediu
 
 * http://www.neotericdesign.com/blog/2013/3/working-around-chrome-s-contenteditable-span-bug
 * http://stackoverflow.com/questions/15015019/prevent-chrome-from-wrapping-contents-of-joined-p-with-a-span
+
+## Warning!
+
+This gem contains **Redactor.js** editor, if you use it you have to buy a licence from [http://imperavi.com/redactor/](http://imperavi.com/redactor/).
