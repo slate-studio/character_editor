@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.name          = 'character_editor'
   gem.version       = Character::Editor::VERSION
   gem.summary       = 'Character WYSIWYG editor + Redactor.js'
-  gem.license       = 'MIT but not for Redactor.js'
+  gem.license       = ''
 
   gem.authors       = ['Alexander Kravets']
   gem.email         = 'alex@slatestudio.com'
